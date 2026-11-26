@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vocab Tracker</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1><img src="../icons/icon32.png" alt="" width="24" height="24"> Vocab Tracker</h1>
+    <nav>
+      <button class="tab active" data-view="list">Words</button>
+      <button class="tab" data-view="review">Review</button>
+    </nav>
+    <span id="stats" class="muted"></span>
+    <button id="export">Export CSV (Anki)</button>
+  </header>
+
+  <main id="list" class="view split">
+    <aside class="sidebar">
+      <div class="toolbar">
+        <input id="search" type="search" placeholder="Filter words">
+        <select id="filter">
+          <option value="learning">Learning</option>
+          <option value="known">Known</option>
+          <option value="all">All</option>
+        </select>
+      </div>
+      <ul id="words"></ul>
+      <p id="empty" class="muted" hidden>
+        Nothing here. Search Google for something like <em>“ubiquitous meaning”</em> and it shows up.
+      </p>
+    </aside>
+    <article id="detail"></article>
+  </main>
+
+  <main id="review" class="view" hidden>
+    <p id="progress" class="muted"></p>
+    <div id="card" class="card" tabindex="0">
+      <div id="card-front"></div>
+      <div id="card-back" hidden></div>
+    </div>
+    <div class="review-actions">
+      <button id="again">Again <kbd>1</kbd></button>
+      <button id="know" class="primary">I know it <kbd>2</kbd></button>
+    </div>
+    <p id="review-hint" class="muted">Click the card or press <kbd>Space</kbd> to flip</p>
+    <p id="review-empty" class="muted" hidden>No words left to review. 🎉</p>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

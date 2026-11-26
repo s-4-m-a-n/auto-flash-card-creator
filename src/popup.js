@@ -1,114 +1,101 @@
+import {
+  el, loadWords, onWordsChanged, updateWord, renderSense, definitionStatus,
+  filterWords, statsText, reviewOrder, exportCsv,
+} from './common.js';
+
 const $ = (id) => document.getElementById(id);
 
+// The popup is small; anything beyond this lives in the full-page view.
+const EXPANDED_SENSES = 3;
+
 let words = {};
+let expanded = null;
 let reviewQueue = [];
 
 async function load() {
-  ({ words = {} } = await chrome.storage.local.get('words'));
+  words = await loadWords();
   renderList();
 }
 
-async function updateWord(term, change) {
-  const { words: current = {} } = await chrome.storage.local.get('words');
-  if (change === null) delete current[term];
-  else if (current[term]) Object.assign(current[term], change);
-  await chrome.storage.local.set({ words: current });
-}
-
-chrome.storage.onChanged.addListener((changes, area) => {
-  if (area !== 'local' || !changes.words) return;
-  words = changes.words.newValue ?? {};
+onWordsChanged((next) => {
+  words = next;
   renderList();
 });
 
-// ---- Word list ----
-
-function el(tag, className, text) {
-  const node = document.createElement(tag);
-  if (className) node.className = className;
-  if (text != null) node.textContent = text;
-  return node;
-}
-
-function renderSenses(container, word) {
-  if (word.senses === null) {
-    container.append(el('p', 'sense muted', 'Fetching definition…'));
-  } else if (word.senses.length === 0) {
-    container.append(el('p', 'sense muted', 'No dictionary entry found.'));
-  }
-  for (const s of word.senses ?? []) {
-    const p = el('p', 'sense');
-    p.append(el('span', 'pos', `${s.pos} `), s.def);
-    if (s.example) p.append(' ', el('span', 'example', `“${s.example}”`));
-    container.append(p);
-  }
-}
+// ---- Word list (compact: first definition only, click to expand) ----
 
 function renderList() {
-  const query = $('search').value.trim().toLowerCase();
-  const filter = $('filter').value;
-  const all = Object.values(words);
-  const shown = all
-    .filter((w) => filter === 'all' || w.status === filter)
-    .filter((w) => w.term.includes(query))
-    .sort((a, b) => b.lastSeen - a.lastSeen);
+  const shown = filterWords(words, { query: $('search').value, status: $('filter').value });
 
   const list = $('words');
   list.replaceChildren();
   for (const w of shown) {
-    const li = el('li', 'word');
+    const isOpen = w.term === expanded;
+    const li = el('li', isOpen ? 'word open' : 'word');
     const head = el('div', 'word-head');
     head.append(el('span', 'term', w.term));
     if (w.phonetic) head.append(el('span', 'phonetic', w.phonetic));
-    head.append(el('span', 'count', `looked up ${w.count}×`));
+    head.append(el('span', 'count', `${w.count}×`));
     li.append(head);
-    renderSenses(li, w);
 
-    const actions = el('div', 'word-actions');
-    const toggle = el('button', '', w.status === 'known' ? 'Back to learning' : 'Mark known');
-    toggle.onclick = () => updateWord(w.term, { status: w.status === 'known' ? 'learning' : 'known' });
-    const remove = el('button', '', 'Delete');
-    remove.onclick = () => updateWord(w.term, null);
-    actions.append(toggle, remove);
-    li.append(actions);
+    const status = definitionStatus(w);
+    if (status) li.append(status);
+    const senseCount = w.senses?.length ?? 0;
+    const visible = isOpen ? EXPANDED_SENSES : 1;
+    for (const s of (w.senses ?? []).slice(0, visible)) li.append(renderSense(s));
+
+    if (isOpen) {
+      const actions = el('div', 'word-actions');
+      const toggle = el('button', '', w.status === 'known' ? 'Back to learning' : 'Mark known');
+      toggle.onclick = () => updateWord(w.term, { status: w.status === 'known' ? 'learning' : 'known' });
+      const remove = el('button', '', 'Delete');
+      remove.onclick = () => updateWord(w.term, null);
+      const full = el('button', '', senseCount > visible ? `See all ${senseCount} in full view ↗` : 'Full view ↗');
+      full.onclick = () => openFullView(w.term);
+      actions.append(toggle, remove, full);
+      li.append(actions);
+    } else if (senseCount > 1) {
+      li.append(el('p', 'more', `+${senseCount - 1} more`));
+    }
+
+    li.addEventListener('click', (e) => {
+      if (e.target.closest('button')) return;
+      expanded = isOpen ? null : w.term;
+      renderList();
+    });
     list.append(li);
   }
 
-  $('empty').hidden = all.length > 0;
-  const learning = all.filter((w) => w.status === 'learning').length;
-  $('stats').textContent = all.length ? `${learning} learning · ${all.length - learning} known` : '';
+  $('empty').hidden = Object.keys(words).length > 0;
+  $('stats').textContent = statsText(words);
 }
 
 $('search').addEventListener('input', renderList);
 $('filter').addEventListener('change', renderList);
+$('export').addEventListener('click', () => exportCsv(words));
 
-// ---- CSV export (front,back — imports directly into Anki) ----
+// ---- Full-page view: focus the existing tab if one is open ----
 
-function csvCell(value) {
-  return `"${String(value).replace(/"/g, '""')}"`;
+async function openFullView(term) {
+  const base = chrome.runtime.getURL('src/app.html');
+  const url = term ? `${base}#${encodeURIComponent(term)}` : base;
+  const tabs = await chrome.runtime.getContexts({ contextTypes: ['TAB'] });
+  const existing = tabs.find((c) => c.documentUrl?.startsWith(base));
+  if (existing) {
+    await chrome.tabs.update(existing.tabId, { active: true, ...(term && { url }) });
+    await chrome.windows.update(existing.windowId, { focused: true });
+  } else {
+    await chrome.tabs.create({ url });
+  }
+  window.close();
 }
 
-$('export').addEventListener('click', () => {
-  const rows = Object.values(words).map((w) => {
-    const back = (w.senses ?? []).map((s) => `(${s.pos}) ${s.def}`).join('<br>');
-    return [w.term, [w.phonetic, back].filter(Boolean).join('<br>')].map(csvCell).join(',');
-  });
-  const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
-  const a = el('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `vocab-${new Date().toISOString().slice(0, 10)}.csv`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-});
+$('open-full').addEventListener('click', () => openFullView(expanded));
 
 // ---- Review (flashcards) ----
 
 function startReview() {
-  // Words you've looked up most often come first — they're the ones not sticking.
-  reviewQueue = Object.values(words)
-    .filter((w) => w.status === 'learning')
-    .sort((a, b) => b.count - a.count || b.lastSeen - a.lastSeen)
-    .map((w) => w.term);
+  reviewQueue = reviewOrder(words);
   showCard();
 }
 
@@ -126,7 +113,7 @@ function showCard() {
   const back = $('card-back');
   back.replaceChildren();
   if (word.phonetic) back.append(el('p', 'phonetic', word.phonetic));
-  renderSenses(back, word);
+  back.append(definitionStatus(word) ?? '', ...(word.senses ?? []).slice(0, 2).map(renderSense));
   back.hidden = true;
 }
 

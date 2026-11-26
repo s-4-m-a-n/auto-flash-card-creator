@@ -51,7 +51,17 @@ button.primary, .tab.active { background: var(--accent); color: var(--accent-tex
 .toolbar input { flex: 1; }
 
 #words { list-style: none; margin: 0; padding: 0; max-height: 380px; overflow-y: auto; }
-.word { padding: 8px 0; border-bottom: 1px solid var(--border); }
+nav { display: flex; gap: 4px; }
+
+.word { padding: 8px 6px; border-bottom: 1px solid var(--border); cursor: pointer; border-radius: 6px; }
+.word:hover { background: var(--surface); }
+.word:not(.open) .sense {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.more { margin: 2px 0 0; font-size: 11px; color: var(--accent); }
 .word-head { display: flex; align-items: baseline; gap: 6px; }
 .term { font-weight: 600; font-size: 14px; }
 .phonetic, .muted { color: var(--muted); }

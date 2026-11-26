@@ -12,7 +12,10 @@ chrome.webNavigation.onCommitted.addListener(onSearch, SEARCH_FILTER);
 chrome.webNavigation.onHistoryStateUpdated.addListener(onSearch, SEARCH_FILTER);
 chrome.tabs.onRemoved.addListener((tabId) => lastSeenByTab.delete(tabId));
 chrome.runtime.onStartup.addListener(refreshBadge);
-chrome.runtime.onInstalled.addListener(refreshBadge);
+chrome.runtime.onInstalled.addListener(() => {
+  refreshBadge();
+  backfillDefinitions();
+});
 
 function onSearch({ tabId, frameId, url }) {
   if (frameId !== 0) return;
@@ -53,6 +56,7 @@ async function recordLookup(term) {
 async function fetchDefinition(term) {
   let phonetic = '';
   let senses;
+  let synonyms = [];
   try {
     const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(term)}`);
     if (res.status === 404) {
@@ -64,10 +68,12 @@ async function fetchDefinition(term) {
       phonetic = entries.find((e) => e.phonetic)?.phonetic
         ?? entries.flatMap((e) => e.phonetics ?? []).find((p) => p.text)?.text
         ?? '';
-      senses = entries
-        .flatMap((e) => e.meanings)
-        .flatMap((m) => m.definitions.slice(0, 2).map((d) => ({ pos: m.partOfSpeech, def: d.definition, example: d.example ?? '' })))
-        .slice(0, 4);
+      const meanings = entries.flatMap((e) => e.meanings);
+      senses = meanings
+        .flatMap((m) => m.definitions.slice(0, 3).map((d) => ({ pos: m.partOfSpeech, def: d.definition, example: d.example ?? '' })))
+        .slice(0, 10);
+      synonyms = [...new Set(meanings.flatMap((m) => [...(m.synonyms ?? []), ...m.definitions.flatMap((d) => d.synonyms ?? [])]))]
+        .slice(0, 12);
     }
   } catch {
     return; // offline; retry on next lookup
@@ -76,9 +82,17 @@ async function fetchDefinition(term) {
   await enqueue(async () => {
     const { words = {} } = await chrome.storage.local.get('words');
     if (!words[term]) return; // deleted while fetching
-    Object.assign(words[term], { phonetic, senses });
+    Object.assign(words[term], { phonetic, senses, synonyms });
     await chrome.storage.local.set({ words });
   });
+}
+
+// Words saved before synonyms were stored have only a few senses; fetch them again once.
+async function backfillDefinitions() {
+  const { words = {} } = await chrome.storage.local.get('words');
+  for (const w of Object.values(words)) {
+    if (w.senses !== null && !w.synonyms) await fetchDefinition(w.term);
+  }
 }
 
 function updateBadge(words) {
