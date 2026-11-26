@@ -65,7 +65,7 @@ function csvCell(value) {
   return `"${String(value).replace(/"/g, '""')}"`;
 }
 
-// front,back — imports directly into Anki.
+// One row per word: front (term), back (pronunciation + definitions).
 export function exportCsv(words) {
   const rows = Object.values(words).map((w) => {
     const back = (w.senses ?? []).map((s) => `(${s.pos}) ${s.def}`).join('<br>');
