@@ -1,0 +1,79 @@
+:root {
+  --bg: #ffffff;
+  --surface: #f4f5f8;
+  --text: #1c1e24;
+  --muted: #6b7080;
+  --border: #dfe2ea;
+  --accent: #3b6ef5;
+  --accent-text: #ffffff;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17181c;
+    --surface: #22242a;
+    --text: #e8e9ee;
+    --muted: #9095a3;
+    --border: #33363f;
+    --accent: #6b8ff8;
+    --accent-text: #0e1220;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  width: 380px;
+  min-height: 300px;
+  margin: 0;
+  padding: 12px;
+  font: 13px/1.45 system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+h1 { font-size: 15px; margin: 0; }
+
+button, input, select {
+  font: inherit;
+  color: inherit;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+button { cursor: pointer; }
+button.primary, .tab.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+
+.toolbar { display: flex; gap: 6px; margin-bottom: 8px; }
+.toolbar input { flex: 1; }
+
+#words { list-style: none; margin: 0; padding: 0; max-height: 380px; overflow-y: auto; }
+.word { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.word-head { display: flex; align-items: baseline; gap: 6px; }
+.term { font-weight: 600; font-size: 14px; }
+.phonetic, .muted { color: var(--muted); }
+.count { margin-left: auto; font-size: 11px; color: var(--muted); }
+.sense { margin: 2px 0 0; }
+.pos { font-style: italic; color: var(--muted); }
+.example { color: var(--muted); font-style: italic; }
+.word-actions { display: flex; gap: 4px; margin-top: 4px; }
+.word-actions button { padding: 1px 8px; font-size: 11px; }
+
+footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+
+.card {
+  min-height: 170px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+#card-front { font-size: 22px; font-weight: 600; text-align: center; }
+.review-actions { display: flex; justify-content: center; gap: 8px; }

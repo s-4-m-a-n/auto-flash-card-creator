@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Vocab Tracker</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <h1>Vocab Tracker</h1>
+    <nav>
+      <button class="tab active" data-view="list">Words</button>
+      <button class="tab" data-view="review">Review</button>
+    </nav>
+  </header>
+
+  <section id="list" class="view">
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="Filter words">
+      <select id="filter">
+        <option value="learning">Learning</option>
+        <option value="known">Known</option>
+        <option value="all">All</option>
+      </select>
+    </div>
+    <ul id="words"></ul>
+    <p id="empty" class="muted" hidden>
+      Nothing yet. Search Google for something like <em>“ubiquitous meaning”</em> and it shows up here.
+    </p>
+    <footer>
+      <span id="stats" class="muted"></span>
+      <button id="export">Export CSV (Anki)</button>
+    </footer>
+  </section>
+
+  <section id="review" class="view" hidden>
+    <div id="card" class="card" tabindex="0">
+      <div id="card-front"></div>
+      <div id="card-back" hidden></div>
+    </div>
+    <p id="review-hint" class="muted">Click the card to flip it</p>
+    <div class="review-actions">
+      <button id="again">Again</button>
+      <button id="know" class="primary">I know it</button>
+    </div>
+    <p id="review-empty" class="muted" hidden>No words left to review.</p>
+  </section>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "vocab-tracker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/parser.test.mjs"
+  }
+}
