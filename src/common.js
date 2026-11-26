@@ -65,13 +65,15 @@ function csvCell(value) {
   return `"${String(value).replace(/"/g, '""')}"`;
 }
 
-// One row per word: front (term), back (pronunciation + definitions).
+// One row per word: front (term), back (pronunciation + definitions, one per line).
+// Line breaks inside a quoted cell stay in that cell.
 export function exportCsv(words) {
   const rows = Object.values(words).map((w) => {
-    const back = (w.senses ?? []).map((s) => `(${s.pos}) ${s.def}`).join('<br>');
-    return [w.term, [w.phonetic, back].filter(Boolean).join('<br>')].map(csvCell).join(',');
+    const back = (w.senses ?? []).map((s) => `(${s.pos}) ${s.def}`).join('\n');
+    return [w.term, [w.phonetic, back].filter(Boolean).join('\n')].map(csvCell).join(',');
   });
-  const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+  // The byte-order mark makes Excel read the file as UTF-8, so phonetics like /ə/ display correctly.
+  const blob = new Blob(['﻿', rows.join('\r\n')], { type: 'text/csv;charset=utf-8' });
   const a = el('a');
   a.href = URL.createObjectURL(blob);
   a.download = `vocab-${new Date().toISOString().slice(0, 10)}.csv`;
