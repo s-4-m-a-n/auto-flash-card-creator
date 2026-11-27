@@ -3,6 +3,12 @@
 Collects the words you look up on Google and turns them into flashcards automatically.
 Search `ubiquitous meaning` from the address bar or google.com, and the word is saved with its definition.
 
+![Popup: words you looked up, saved automatically](store/screenshot-1-popup.png)
+
+| Full-page view | Flashcard review |
+|---|---|
+| ![Full-page view with definitions grouped by part of speech and synonyms](store/screenshot-2-full-view.png) | ![Flashcard review with keyboard shortcuts](store/screenshot-3-review.png) |
+
 ## What it detects
 
 `<word> meaning`, `<word> meaning in <language>`, `<word> definition`, `<word> word meaning`,
@@ -31,3 +37,12 @@ Definitions come from the free [Dictionary API](https://dictionaryapi.dev). Ever
 ```
 npm test
 ```
+
+## Privacy
+
+Your word list stays in your browser. Only the looked-up word is sent to dictionaryapi.dev to fetch its definition. See [PRIVACY.md](PRIVACY.md).
+
+## Publishing
+
+`npm run package` builds `dist/vocab-tracker-<version>.zip` for the Chrome Web Store. Bump `version` in `manifest.json` before each upload.
+Listing text, permission justifications and store images are in [`store/`](store/listing.md).

@@ -3,6 +3,8 @@
   "name": "Vocab Tracker",
   "version": "0.1.0",
   "description": "Automatically collects words you look up on Google (\"<word> meaning\", \"define <word>\", ...) and turns them into flashcards.",
+  "homepage_url": "https://github.com/s-4-m-a-n/auto-flash-card-creator",
+  "minimum_chrome_version": "117",
   "permissions": ["webNavigation", "storage"],
   "host_permissions": ["https://api.dictionaryapi.dev/*"],
   "background": {
