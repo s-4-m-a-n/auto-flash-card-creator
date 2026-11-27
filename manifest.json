@@ -5,7 +5,7 @@
   "description": "Automatically collects words you look up on Google (\"<word> meaning\", \"define <word>\", ...) and turns them into flashcards.",
   "homepage_url": "https://github.com/s-4-m-a-n/auto-flash-card-creator",
   "minimum_chrome_version": "117",
-  "permissions": ["webNavigation", "storage"],
+  "permissions": ["webNavigation", "storage", "idle", "alarms"],
   "host_permissions": ["https://api.dictionaryapi.dev/*"],
   "background": {
     "service_worker": "src/background.js",
@@ -16,6 +16,10 @@
     "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
+  },
+  "options_ui": {
+    "page": "src/options.html",
+    "open_in_tab": true
   },
   "action": {
     "default_popup": "src/popup.html",

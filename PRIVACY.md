@@ -8,6 +8,8 @@ Vocab Tracker is a Chrome extension that saves the words you look up on Google s
 
 The extension watches the addresses of Google search pages you open (`google.<domain>/search?...`) in order to read the search query. It only acts on queries that ask for a word's meaning, such as `ubiquitous meaning`, `define ubiquitous` or `what does ubiquitous mean`. All other searches and all other pages are ignored and nothing about them is stored.
 
+To decide when to pop up a flashcard, the extension also checks whether you are idle (no keyboard or mouse input for a few minutes) or your screen is locked, whether the active tab is playing sound, and whether a window is fullscreen. These checks are not recorded.
+
 ## What the extension stores
 
 For each word you look up, the extension stores:
@@ -16,6 +18,8 @@ For each word you look up, the extension stores:
 - how many times you looked it up, and when (first and last time)
 - whether you marked it as "Learning" or "Known"
 - its pronunciation, definitions, examples and synonyms
+
+It also stores your settings, and which word was last shown as a flashcard pop-up and when.
 
 This data is stored only on your computer, in Chrome's extension storage (`chrome.storage.local`). It is not synced to your Google account and is never sent to the developer. Uninstalling the extension deletes it.
 

@@ -31,6 +31,7 @@ FEATURES
 • Popup: a compact list of your words with their main definition. Click a word to see more.
 • Full-page view: every definition grouped by part of speech, with examples, synonyms and how often you've looked the word up
 • Flashcard review: your most-looked-up words come first. Keyboard shortcuts: Space to flip, 1 for "again", 2 for "I know it".
+• Flashcard pop-ups: every so often, a random word you're learning pops up in a small card. Choose how often, show them only when you're idle, or turn them off.
 • Toolbar badge shows how many words you're still learning
 • Export your list as a CSV file
 
@@ -71,6 +72,16 @@ Used to read the address of Google search result pages (google.<domain>/search) 
 `storage`
 ```
 Stores the user's word list (words, definitions, lookup counts and learning status) locally in chrome.storage.local so it persists between browser sessions.
+```
+
+`idle`
+```
+Used to decide when to show a flashcard pop-up: if the user picks "only when I'm idle", a card opens after a few minutes without keyboard or mouse input, and in every mode cards are skipped while the screen is locked. The idle state is not stored or sent anywhere. Users can change this or turn pop-ups off in the extension's settings.
+```
+
+`alarms`
+```
+Runs the timer that shows a flashcard pop-up at the interval the user chooses (5 minutes to 2 hours). Users can change the interval or turn pop-ups off in the extension's settings.
 ```
 
 Host permission `https://api.dictionaryapi.dev/*`

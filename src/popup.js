@@ -91,6 +91,7 @@ async function openFullView(term) {
 }
 
 $('open-full').addEventListener('click', () => openFullView(expanded));
+$('open-settings').addEventListener('click', () => chrome.runtime.openOptionsPage());
 
 // ---- Review (flashcards) ----
 

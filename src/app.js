@@ -70,6 +70,7 @@ function select(term) {
 $('search').addEventListener('input', renderList);
 $('filter').addEventListener('change', renderList);
 $('export').addEventListener('click', () => exportCsv(words));
+$('open-settings').addEventListener('click', () => chrome.runtime.openOptionsPage());
 
 // ---- Word detail (right) ----
 

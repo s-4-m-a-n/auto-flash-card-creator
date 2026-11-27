@@ -1,0 +1,160 @@
+/* Settings page; builds on app.css. */
+
+body { background: var(--surface); }
+.topbar { background: var(--bg); }
+.crumb { font-size: 14px; }
+.crumb::before { content: "/"; margin-right: 10px; opacity: 0.5; }
+
+main {
+  width: min(640px, 100%);
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.panel {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+}
+.panel h2 { margin: 0 0 4px; font-size: 17px; }
+.panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+.panel-head p { margin: 0; font-size: 14px; }
+
+/* ---- Toggle switch ---- */
+
+.switch { position: relative; flex: none; cursor: pointer; margin-top: 2px; }
+.switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.track {
+  display: block;
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--border);
+  transition: background 0.15s;
+}
+.thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s;
+}
+.switch input:checked + .track { background: var(--accent); }
+.switch input:checked + .track .thumb { transform: translateX(18px); }
+.switch input:focus-visible + .track { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---- Settings fields ---- */
+
+.setting {
+  border: 0;
+  margin: 20px 0 0;
+  padding: 20px 0 0;
+  border-top: 1px solid var(--border);
+  min-width: 0;
+  transition: opacity 0.15s;
+}
+.setting:disabled { opacity: 0.45; }
+.field + .field { margin-top: 18px; }
+.field[hidden] { display: none; }
+.label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 600; }
+.note { margin: 18px 0 0; font-size: 13px; }
+
+.segmented {
+  display: grid;
+  /* One row of equal buttons; wraps to a second row only on very narrow screens. */
+  grid-template-columns: repeat(auto-fit, minmax(52px, 1fr));
+  padding: 3px;
+  gap: 3px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.segmented label { position: relative; }
+.segmented input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.segmented span {
+  display: block;
+  padding: 7px 4px;
+  border-radius: 7px;
+  text-align: center;
+  white-space: nowrap;
+  font-size: 14px;
+  color: var(--muted);
+  transition: background 0.15s, color 0.15s;
+}
+.segmented[data-setting="cardMode"] span { white-space: normal; } /* long labels may wrap */
+.segmented label:hover span { color: var(--text); }
+.segmented input:checked + span {
+  background: var(--bg);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.segmented input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 1px; }
+.setting:disabled .segmented input { cursor: default; }
+
+.panel-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+.status { margin: 0; font-size: 13px; color: var(--muted); }
+.status::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+  vertical-align: 1px;
+}
+.status.on::before { background: #2fb36b; }
+.panel-foot button { flex: none; }
+
+/* ---- About ---- */
+
+.about {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 24px;
+  margin: 16px 0 0;
+  font-size: 14px;
+}
+.about dt { color: var(--muted); }
+.about dd { margin: 0; }
+.links { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 18px 0 0; font-size: 14px; }
+.links a { color: var(--accent); text-decoration: none; }
+.links a:hover { text-decoration: underline; }
+
+/* ---- Saved toast ---- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 13px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 520px) {
+  .panel { padding: 18px; }
+  .panel-foot { flex-direction: column; align-items: stretch; }
+  .segmented span { font-size: 12.5px; padding: 7px 2px; }
+}

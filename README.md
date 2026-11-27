@@ -28,6 +28,7 @@ Looking up a word again bumps its count and moves it back to *Learning*.
 - **Popup**: compact list with each word's first definition. Click a word to expand it, and click **↗** to open the full view.
 - **Full view** (opens in a tab): word list plus a detail pane showing every definition grouped by part of speech, with examples, synonyms and lookup history. Use ↑/↓ to move between words.
 - **Review**: flashcards, most-looked-up words first. In the full view, <kbd>Space</kbd> flips, <kbd>1</kbd> = again, <kbd>2</kbd> = I know it.
+- **Flashcard pop-ups**: every 30 minutes a random word you're learning pops up in a small card window. In **⚙ Settings** you can change the interval, switch to "only when I'm idle" (no keyboard/mouse input for a few minutes), or turn it off. Cards are skipped while a tab is playing sound, a window is fullscreen or the screen is locked.
 - **Export CSV**: downloads a `front,back` file with every word and its definitions.
 
 Definitions come from the free [Dictionary API](https://dictionaryapi.dev). Everything is stored locally in `chrome.storage.local`.

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Flashcard · Vocab Tracker</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="card.css">
+</head>
+<body>
+  <main>
+    <p class="muted eyebrow">Do you remember this one?</p>
+    <div id="card" class="card" tabindex="0">
+      <div id="card-front"></div>
+      <div id="card-back" hidden></div>
+    </div>
+    <p id="hint" class="muted">Click the card or press <kbd>Space</kbd> to flip</p>
+    <div class="review-actions">
+      <button id="again">Not yet <kbd>1</kbd></button>
+      <button id="know" class="primary">I know it <kbd>2</kbd></button>
+    </div>
+    <p class="links">
+      <a href="#" id="full">Open full view</a> · <a href="#" id="settings">Settings</a>
+    </p>
+  </main>
+  <script type="module" src="card.js"></script>
+</body>
+</html>
